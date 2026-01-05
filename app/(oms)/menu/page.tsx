@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from 'lucide-react'; // Mocking switch with a button/icon for now or just Button
+import { Switch } from '@/components/ui/switch';
 
 // Mock menu data matching the generator
 const INITIAL_MENU = [
@@ -46,13 +46,10 @@ export default function MenuPage() {
                         <CardContent>
                             <div className="flex justify-between items-center mt-2">
                                 <div className="text-2xl font-bold">₹{item.price}</div>
-                                <Button
-                                    variant={item.inStock ? "destructive" : "default"}
-                                    size="sm"
-                                    onClick={() => toggleStock(item.id)}
-                                >
-                                    {item.inStock ? 'Mark Unavailable' : 'Mark Available'}
-                                </Button>
+                                <Switch
+                                    checked={item.inStock}
+                                    onCheckedChange={() => toggleStock(item.id)}
+                                />
                             </div>
                             <p className="text-xs text-muted-foreground mt-2">{item.category}</p>
                         </CardContent>
