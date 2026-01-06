@@ -9,8 +9,22 @@ export function OrderSimulator() {
 
     useEffect(() => {
         // Initial population
+        // Standard orders
         addOrder(generateRandomOrder());
         addOrder(generateRandomOrder());
+
+        // FORCE EXCEPTION SCENARIOS (SLA Testing)
+        // 1. Late Order (> 15 mins)
+        const lateOrder = generateRandomOrder();
+        lateOrder.status = 'Preparing';
+        lateOrder.createdAt = new Date(Date.now() - 18 * 60 * 1000); // 18 mins ago
+        addOrder(lateOrder);
+
+        // 2. Critical Order (> 25 mins)
+        const criticalOrder = generateRandomOrder();
+        criticalOrder.status = 'Preparing';
+        criticalOrder.createdAt = new Date(Date.now() - 28 * 60 * 1000); // 28 mins ago
+        addOrder(criticalOrder);
 
         // Interval simulation
         const interval = setInterval(() => {

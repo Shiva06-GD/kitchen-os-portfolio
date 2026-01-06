@@ -57,22 +57,47 @@ export function OrderCard({ order }: OrderCardProps) {
         if (next) updateStatus(order.id, next);
     };
 
+    // SLA Logic
+    const isCritical = elapsed > 25;
+    const isLate = elapsed > 15 && !isCritical;
+
     return (
         <Card
             ref={setNodeRef}
             style={style}
             {...listeners}
             {...attributes}
-            className="mb-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow relative"
+            className={cn(
+                "mb-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-all relative border",
+                isCritical ? "border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.3)] animate-pulse" : "border-border",
+                isLate ? "border-yellow-500" : ""
+            )}
         >
             <CardHeader className="p-4 pb-2 flex-row items-center justify-between space-y-0">
-                <div className="flex items-center gap-2">
-                    <Badge className={cn("rounded-sm px-1.5", getAggregatorColor(order.aggregator))}>
-                        {order.aggregator}
-                    </Badge>
-                    <span className="font-mono font-bold text-sm">#{order.id.split('-')[1]}</span>
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                        <Badge className={cn("rounded-sm px-1.5", getAggregatorColor(order.aggregator))}>
+                            {order.aggregator}
+                        </Badge>
+                        <span className="font-mono font-bold text-sm">#{order.id.split('-')[1]}</span>
+                    </div>
+                    {/* SLA Badges */}
+                    {isCritical && (
+                        <Badge variant="destructive" className="w-fit text-[10px] px-1 py-0 animate-bounce">
+                            🚨 OVER SLA
+                        </Badge>
+                    )}
+                    {isLate && (
+                        <Badge className="w-fit text-[10px] px-1 py-0 bg-yellow-500 hover:bg-yellow-600 text-black">
+                            ⚠️ Delayed
+                        </Badge>
+                    )}
                 </div>
-                <div className={cn("text-xs font-bold flex items-center gap-1", elapsed > 15 ? 'text-red-500' : 'text-muted-foreground')}>
+
+                <div className={cn(
+                    "text-xs font-bold flex items-center gap-1 px-2 py-1 rounded",
+                    isCritical ? "bg-red-950 text-red-500" : (isLate ? "bg-yellow-950 text-yellow-500" : "text-muted-foreground")
+                )}>
                     <Clock className="h-3 w-3" />
                     {elapsed}m
                 </div>
