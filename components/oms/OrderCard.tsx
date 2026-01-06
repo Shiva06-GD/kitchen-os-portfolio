@@ -119,16 +119,30 @@ export function OrderCard({ order }: OrderCardProps) {
             <CardFooter className="p-2 bg-muted/30 flex justify-between">
                 <Button
                     size="sm"
-                    variant="ghost"
-                    className="h-6 text-xs w-full hover:bg-slate-800 hover:text-white transition-colors"
+                    variant={isCritical || isLate ? "default" : "outline"}
+                    className={cn(
+                        "h-7 text-xs w-full transition-all border-none font-semibold",
+                        isCritical ? "bg-red-600 hover:bg-red-700 text-white animate-pulse" :
+                            isLate ? "bg-amber-600 hover:bg-amber-700 text-white" :
+                                "hover:bg-slate-800 hover:text-white bg-slate-900/50"
+                    )}
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => {
                         e.stopPropagation();
                         handleNext();
                     }}
                 >
-                    {order.status !== 'Dispatched' ? 'Next Status' : 'Completed'}
-                    {order.status !== 'Dispatched' && <MoveRight className="h-3 w-3 ml-2" />}
+                    {order.status === 'Dispatched' ? (
+                        'Completed'
+                    ) : isCritical ? (
+                        '🔥 PRIORITIZE'
+                    ) : isLate ? (
+                        '⚠️ RESOLVE DELAY'
+                    ) : (
+                        <>
+                            Next Status <MoveRight className="h-3 w-3 ml-2" />
+                        </>
+                    )}
                 </Button>
             </CardFooter>
         </Card>
